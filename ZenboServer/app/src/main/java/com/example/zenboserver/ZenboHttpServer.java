@@ -65,20 +65,14 @@ public class ZenboHttpServer extends NanoHTTPD {
                 case "/spin": {
                     if (isSpinning) return ok("spin: already spinning");
                     isSpinning = true;
-                    // 轉一圈：TURN_LEFT 持續約 4 秒後停止
                     robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.TURN_LEFT);
-                    new Thread(() -> {
-                        try { Thread.sleep(4000); } catch (InterruptedException ignored) {}
-                        robotAPI.motion.stopMoving();
-                        isSpinning = false;
-                    }).start();
                     return ok("spin: started");
                 }
 
                 case "/stop": {
                     robotAPI.motion.stopMoving();
                     isFollowing = false;
-                    isSpinning = false;
+                    isSpinning  = false;
                     return ok("stop");
                 }
 

@@ -17,7 +17,9 @@ public class MainActivity extends Activity {
     private TextView tvLog;
     private ScrollView scrollLog;
     private Button btnFollow;
+    private Button btnSpin;
     private boolean isFollowing = false;
+    private boolean isSpinning  = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,7 @@ public class MainActivity extends Activity {
         tvLog       = findViewById(R.id.tvLog);
         scrollLog   = findViewById(R.id.scrollLog);
         btnFollow   = findViewById(R.id.btnFollow);
+        btnSpin     = findViewById(R.id.btnSpin);
 
         setupButtons();
     }
@@ -56,9 +59,20 @@ public class MainActivity extends Activity {
         setExprBtn(R.id.btnWorried,   "worried");
         setExprBtn(R.id.btnDefault,   "default");
 
-        // 轉圈
-        findViewById(R.id.btnSpin).setOnClickListener(v ->
-                send(() -> api.spin((ok, msg) -> log("轉圈：" + (ok ? "OK" : "失敗")))));
+        // 轉圈（toggle）
+        btnSpin.setOnClickListener(v -> {
+            if (!isSpinning) {
+                send(() -> api.spin((ok, msg) -> {
+                    if (ok) { isSpinning = true; updateSpinBtn(); }
+                    log("轉圈：" + (ok ? "開始" : "失敗"));
+                }));
+            } else {
+                send(() -> api.stop((ok, msg) -> {
+                    if (ok) { isSpinning = false; updateSpinBtn(); }
+                    log("轉圈：" + (ok ? "停止" : "失敗"));
+                }));
+            }
+        });
 
         // Follow Me
         btnFollow.setOnClickListener(v -> {
@@ -109,6 +123,12 @@ public class MainActivity extends Activity {
     private void send(Runnable r) {
         if (!api.isConfigured()) { toast("請先連線"); return; }
         r.run();
+    }
+
+    private void updateSpinBtn() {
+        btnSpin.setText(isSpinning ? "停止轉圈" : "轉一圈");
+        btnSpin.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                isSpinning ? 0xFFE53935 : 0xFF5C6BC0));
     }
 
     private void updateFollowBtn() {
