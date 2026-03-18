@@ -10,52 +10,42 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Zenbo Controller"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#E0E0FF"
-            android:gravity="center"
-            android:paddingBottom="12dp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Zenbo Controller" android:textSize="22sp" android:textStyle="bold"
+            android:textColor="#E0E0FF" android:gravity="center" android:paddingBottom="12dp"/>
 
         <!-- 連線 -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:background="#16213E" android:padding="12dp"
-            android:layout_marginBottom="10dp">
-
+            android:orientation="vertical" android:background="#16213E"
+            android:padding="12dp" android:layout_marginBottom="10dp">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="連線設定" android:textColor="#7986CB" android:textStyle="bold" android:paddingBottom="6dp"/>
-
+                android:text="連線" android:textColor="#7986CB" android:textStyle="bold" android:paddingBottom="6dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <EditText android:id="@+id/etIp"
                     android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
                     android:hint="192.168.x.x" android:inputType="text"
-                    android:textColor="#E0E0FF" android:textColorHint="#666" android:background="#0F3460" android:padding="8dp"
-                    android:layout_marginEnd="8dp"/>
+                    android:textColor="#E0E0FF" android:textColorHint="#666"
+                    android:background="#0F3460" android:padding="8dp" android:layout_marginEnd="8dp"/>
                 <Button android:id="@+id/btnConnect"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="連線" android:backgroundTint="#4CAF50" android:textColor="#FFF"/>
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 說話 -->
+        <!-- 語音 -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:background="#16213E" android:padding="12dp"
-            android:layout_marginBottom="10dp">
-
+            android:orientation="vertical" android:background="#16213E"
+            android:padding="12dp" android:layout_marginBottom="10dp">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="語音" android:textColor="#7986CB" android:textStyle="bold" android:paddingBottom="6dp"/>
-
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <EditText android:id="@+id/etSpeakText"
                     android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
                     android:hint="說話內容..." android:inputType="text"
-                    android:textColor="#E0E0FF" android:textColorHint="#666" android:background="#0F3460" android:padding="8dp"
-                    android:layout_marginEnd="8dp"/>
+                    android:textColor="#E0E0FF" android:textColorHint="#666"
+                    android:background="#0F3460" android:padding="8dp" android:layout_marginEnd="8dp"/>
                 <Button android:id="@+id/btnSpeak"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="說話" android:backgroundTint="#7986CB" android:textColor="#FFF"/>
@@ -64,70 +54,117 @@
 
         <!-- 表情 -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:background="#16213E" android:padding="12dp"
-            android:layout_marginBottom="10dp">
-
+            android:orientation="vertical" android:background="#16213E"
+            android:padding="12dp" android:layout_marginBottom="10dp">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="表情" android:textColor="#7986CB" android:textStyle="bold" android:paddingBottom="6dp"/>
-
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:orientation="horizontal" android:layout_marginBottom="4dp">
-                <Button android:id="@+id/btnHappy" android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:text="開心" android:backgroundTint="#0F3460" android:textColor="#E0E0FF" android:layout_marginEnd="3dp"/>
-                <Button android:id="@+id/btnConfident" android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:text="自信" android:backgroundTint="#0F3460" android:textColor="#E0E0FF" android:layout_marginEnd="3dp"/>
-                <Button android:id="@+id/btnWorried" android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:text="擔心" android:backgroundTint="#0F3460" android:textColor="#E0E0FF"/>
-            </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <Button android:id="@+id/btnAngry" android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:text="生氣" android:backgroundTint="#0F3460" android:textColor="#E0E0FF" android:layout_marginEnd="3dp"/>
-                <Button android:id="@+id/btnSleepy" android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:text="睏" android:backgroundTint="#0F3460" android:textColor="#E0E0FF" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnHappy" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:text="開心" android:backgroundTint="#0F3460"
+                    android:textColor="#E0E0FF" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnConfident" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:text="自信" android:backgroundTint="#0F3460"
+                    android:textColor="#E0E0FF" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnWorried" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:text="擔心" android:backgroundTint="#0F3460"
+                    android:textColor="#E0E0FF" android:layout_marginEnd="3dp"/>
                 <Button android:id="@+id/btnDefault" android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:text="預設" android:backgroundTint="#0F3460" android:textColor="#E0E0FF"/>
+                    android:layout_weight="1" android:text="預設" android:backgroundTint="#0F3460"
+                    android:textColor="#E0E0FF"/>
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 移動 -->
+        <!-- 動作 -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:background="#16213E" android:padding="12dp"
-            android:layout_marginBottom="10dp">
-
+            android:orientation="vertical" android:background="#16213E"
+            android:padding="12dp" android:layout_marginBottom="10dp">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="移動" android:textColor="#7986CB" android:textStyle="bold" android:paddingBottom="6dp"/>
+                android:text="動作" android:textColor="#7986CB" android:textStyle="bold" android:paddingBottom="6dp"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnSpin"
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:text="轉一圈" android:backgroundTint="#5C6BC0"
+                    android:textColor="#FFF" android:layout_marginEnd="6dp"/>
+                <Button android:id="@+id/btnFollow"
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:text="Follow Me" android:backgroundTint="#4CAF50" android:textColor="#FFF"/>
+            </LinearLayout>
+        </LinearLayout>
 
-            <Button android:id="@+id/btnForward" android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:text="前進" android:backgroundTint="#0F3460" android:textColor="#E0E0FF" android:layout_marginBottom="4dp"/>
-
+        <!-- 輪燈 顏色 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:background="#16213E"
+            android:padding="12dp" android:layout_marginBottom="10dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="輪燈顏色（Solid）" android:textColor="#7986CB" android:textStyle="bold" android:paddingBottom="6dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="horizontal" android:layout_marginBottom="4dp">
-                <Button android:id="@+id/btnLeft" android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:text="左轉" android:backgroundTint="#0F3460" android:textColor="#E0E0FF" android:layout_marginEnd="4dp"/>
-                <Button android:id="@+id/btnStop" android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:text="停止" android:backgroundTint="#E53935" android:textColor="#FFF"/>
-                <Button android:id="@+id/btnRight" android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:text="右轉" android:backgroundTint="#0F3460" android:textColor="#E0E0FF" android:layout_marginStart="4dp"/>
+                <Button android:id="@+id/btnLightRed" android:layout_width="0dp" android:layout_height="36dp"
+                    android:layout_weight="1" android:text="紅" android:backgroundTint="#F44336"
+                    android:textColor="#FFF" android:textSize="12sp" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnLightGreen" android:layout_width="0dp" android:layout_height="36dp"
+                    android:layout_weight="1" android:text="綠" android:backgroundTint="#4CAF50"
+                    android:textColor="#FFF" android:textSize="12sp" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnLightBlue" android:layout_width="0dp" android:layout_height="36dp"
+                    android:layout_weight="1" android:text="藍" android:backgroundTint="#2196F3"
+                    android:textColor="#FFF" android:textSize="12sp" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnLightYellow" android:layout_width="0dp" android:layout_height="36dp"
+                    android:layout_weight="1" android:text="黃" android:backgroundTint="#FFC107"
+                    android:textColor="#000" android:textSize="12sp"/>
             </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnLightPurple" android:layout_width="0dp" android:layout_height="36dp"
+                    android:layout_weight="1" android:text="紫" android:backgroundTint="#9C27B0"
+                    android:textColor="#FFF" android:textSize="12sp" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnLightCyan" android:layout_width="0dp" android:layout_height="36dp"
+                    android:layout_weight="1" android:text="青" android:backgroundTint="#00BCD4"
+                    android:textColor="#FFF" android:textSize="12sp" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnLightOrange" android:layout_width="0dp" android:layout_height="36dp"
+                    android:layout_weight="1" android:text="橘" android:backgroundTint="#FF6600"
+                    android:textColor="#FFF" android:textSize="12sp" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnLightWhite" android:layout_width="0dp" android:layout_height="36dp"
+                    android:layout_weight="1" android:text="白" android:backgroundTint="#EEEEEE"
+                    android:textColor="#000" android:textSize="12sp"/>
+            </LinearLayout>
+        </LinearLayout>
 
-            <Button android:id="@+id/btnBackward" android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:text="後退" android:backgroundTint="#0F3460" android:textColor="#E0E0FF"/>
+        <!-- 輪燈 效果 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:background="#16213E"
+            android:padding="12dp" android:layout_marginBottom="10dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="輪燈效果（白色）" android:textColor="#7986CB" android:textStyle="bold" android:paddingBottom="6dp"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnLightBlink" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:text="閃爍" android:backgroundTint="#0F3460"
+                    android:textColor="#E0E0FF" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnLightBreathe" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:text="呼吸" android:backgroundTint="#0F3460"
+                    android:textColor="#E0E0FF" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnLightMarquee" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:text="跑馬" android:backgroundTint="#0F3460"
+                    android:textColor="#E0E0FF" android:layout_marginEnd="3dp"/>
+                <Button android:id="@+id/btnLightOff" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:text="關燈" android:backgroundTint="#424242"
+                    android:textColor="#E0E0FF"/>
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Log -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:orientation="vertical" android:background="#16213E" android:padding="12dp">
-
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="Log" android:textColor="#7986CB" android:textStyle="bold" android:paddingBottom="6dp"/>
-
             <ScrollView android:id="@+id/scrollLog"
-                android:layout_width="match_parent" android:layout_height="150dp" android:background="#0A0A1A">
+                android:layout_width="match_parent" android:layout_height="130dp" android:background="#0A0A1A">
                 <TextView android:id="@+id/tvLog"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="等待連線..." android:textColor="#AAAAAA" android:textSize="11sp"
-                    android:fontFamily="monospace" android:padding="8dp"/>
+                    android:text="等待連線..." android:textColor="#AAAAAA"
+                    android:textSize="11sp" android:fontFamily="monospace" android:padding="8dp"/>
             </ScrollView>
         </LinearLayout>
 

@@ -4,23 +4,25 @@ import android.util.Log;
 
 import com.asus.robotframework.API.MotionControl;
 import com.asus.robotframework.API.RobotAPI;
+import com.asus.robotframework.API.RobotCommand;
 import com.asus.robotframework.API.RobotFace;
+import com.asus.robotframework.API.WheelLights;
 
 import fi.iki.elonen.NanoHTTPD;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * HTTP Server 跑在 Zenbo 上，接收遠端控制指令並呼叫 ZenboSDK。
- *
  * API 端點：
- *   GET /speak?text=你好              → Zenbo 說話（搭配 HAPPY 表情）
- *   GET /expression?face=happy        → 設定表情（happy/confident/worried/serious/tired/default）
- *   GET /move?dir=forward             → 移動（forward/backward/left/right）
- *   GET /stop                         → 停止所有動作
- *   GET /ping                         → 測試連線
+ *   GET /ping                                → 測試連線
+ *   GET /speak?text=你好                      → 說話（HAPPY 表情）
+ *   GET /expression?face=happy               → 表情（happy/confident/worried/default）
+ *   GET /spin                                → 轉一圈（~4 秒）
+ *   GET /stop                                → 停止所有動作
+ *   GET /follow?enable=true                  → 開啟/關閉 Follow Me
+ *   GET /light?color=red&mode=solid          → 輪燈（color: red/green/blue/yellow/white/purple/cyan/orange/off）
+ *                                               mode: solid/blink/breathe/marquee/off
  */
 public class ZenboHttpServer extends NanoHTTPD {
 
@@ -28,6 +30,8 @@ public class ZenboHttpServer extends NanoHTTPD {
     public static final int PORT = 8080;
 
     private final RobotAPI robotAPI;
+    private boolean isFollowing = false;
+    private boolean isSpinning = false;
 
     public ZenboHttpServer(RobotAPI robotAPI) {
         super(PORT);
@@ -35,17 +39,14 @@ public class ZenboHttpServer extends NanoHTTPD {
     }
 
     @Override
-    public Response serve(NanoHTTPD.IHTTPSession session) {
+    public Response serve(IHTTPSession session) {
         String uri = session.getUri();
-        Map<String, String> rawParams = session.getParms();
-        Map<String, List<String>> params = new HashMap<>();
-        for (Map.Entry<String, String> entry : rawParams.entrySet()) {
-            params.put(entry.getKey(), java.util.Collections.singletonList(entry.getValue()));
-        }
+        Map<String, List<String>> params = session.getParameters();
         Log.d(TAG, "Request: " + uri + " params=" + params);
 
         try {
             switch (uri) {
+
                 case "/ping":
                     return ok("pong");
 
@@ -56,71 +57,123 @@ public class ZenboHttpServer extends NanoHTTPD {
                 }
 
                 case "/expression": {
-                    String face = getParam(params, "face", "happy");
-                    RobotFace rf = parseFace(face);
+                    RobotFace rf = parseFace(getParam(params, "face", "happy"));
                     robotAPI.robot.setExpression(rf, null);
-                    return ok("expression: " + face);
+                    return ok("expression: " + rf.name());
                 }
 
-                case "/move": {
-                    String dir = getParam(params, "dir", "forward");
-                    handleMove(dir);
-                    return ok("move: " + dir);
+                case "/spin": {
+                    if (isSpinning) return ok("spin: already spinning");
+                    isSpinning = true;
+                    // 轉一圈：TURN_LEFT 持續約 4 秒後停止
+                    robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.TURN_LEFT);
+                    new Thread(() -> {
+                        try { Thread.sleep(4000); } catch (InterruptedException ignored) {}
+                        robotAPI.motion.stopMoving();
+                        isSpinning = false;
+                    }).start();
+                    return ok("spin: started");
                 }
 
                 case "/stop": {
                     robotAPI.motion.stopMoving();
+                    isFollowing = false;
+                    isSpinning = false;
                     return ok("stop");
+                }
+
+                case "/follow": {
+                    boolean enable = "true".equalsIgnoreCase(getParam(params, "enable", "true"));
+                    return handleFollow(enable);
+                }
+
+                case "/light": {
+                    String color = getParam(params, "color", "white");
+                    String mode  = getParam(params, "mode", "solid");
+                    handleLight(color, mode);
+                    return ok("light: " + color + " " + mode);
                 }
 
                 default:
                     return newFixedLengthResponse(
-                            Response.Status.NOT_FOUND, "text/plain", "Unknown endpoint: " + uri);
+                            Response.Status.NOT_FOUND, "text/plain", "Unknown: " + uri);
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error handling request", e);
+            Log.e(TAG, "Error handling " + uri, e);
             return newFixedLengthResponse(
                     Response.Status.INTERNAL_ERROR, "text/plain", "Error: " + e.getMessage());
         }
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // ── Follow Me ─────────────────────────────────────────────────────────────
 
-    private void handleMove(String dir) {
-        switch (dir) {
-            case "forward":
-                robotAPI.motion.moveBody(0, 0.3f, 1);
+    private Response handleFollow(boolean enable) {
+        if (enable && !isFollowing) {
+            robotAPI.utility.followUser();
+            isFollowing = true;
+            return ok("follow: started");
+        } else if (!enable && isFollowing) {
+            robotAPI.cancelCommand(RobotCommand.FOLLOW_USER);
+            isFollowing = false;
+            return ok("follow: stopped");
+        }
+        return ok("follow: already " + (isFollowing ? "on" : "off"));
+    }
+
+    // ── Wheel Lights ──────────────────────────────────────────────────────────
+
+    private void handleLight(String colorName, String mode) {
+        WheelLights.Lights lights = WheelLights.Lights.SYNC_BOTH;
+        int color = parseColor(colorName);
+
+        switch (mode) {
+            case "solid":
+                robotAPI.wheelLights.setColor(lights, color, 0);
                 break;
-            case "backward":
-                robotAPI.motion.moveBody(180, 0.3f, 1);
+            case "blink":
+                robotAPI.wheelLights.startBlinking(lights, color, 400, 400, 0);
                 break;
-            case "left":
-                robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.TURN_LEFT);
-                new android.os.Handler(android.os.Looper.getMainLooper())
-                        .postDelayed(() -> robotAPI.motion.stopMoving(), 1000);
+            case "breathe":
+                robotAPI.wheelLights.startBreathing(lights, color, 2000, 0, 0);
                 break;
-            case "right":
-                robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.TURN_RIGHT);
-                new android.os.Handler(android.os.Looper.getMainLooper())
-                        .postDelayed(() -> robotAPI.motion.stopMoving(), 1000);
+            case "marquee":
+                robotAPI.wheelLights.startMarquee(lights,
+                        WheelLights.Direction.DIRECTION_FORWARD, color, 150, 0);
+                break;
+            case "off":
+                robotAPI.wheelLights.turnOff(lights, 0);
                 break;
         }
     }
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
 
     private RobotFace parseFace(String name) {
         switch (name.toLowerCase()) {
             case "confident": return RobotFace.CONFIDENT;
             case "worried":   return RobotFace.WORRIED;
-            case "angry":     return RobotFace.SERIOUS;
-            case "sleepy":    return RobotFace.TIRED;
             case "default":   return RobotFace.DEFAULT;
             default:          return RobotFace.HAPPY;
         }
     }
 
+    private int parseColor(String name) {
+        switch (name.toLowerCase()) {
+            case "red":    return 0xFFFF0000;
+            case "green":  return 0xFF00FF00;
+            case "blue":   return 0xFF0000FF;
+            case "yellow": return 0xFFFFFF00;
+            case "purple": return 0xFF9C27B0;
+            case "cyan":   return 0xFF00FFFF;
+            case "orange": return 0xFFFF6600;
+            case "off":    return 0x00000000;
+            default:       return 0xFFFFFFFF; // white
+        }
+    }
+
     private String getParam(Map<String, List<String>> params, String key, String def) {
-        List<String> values = params.get(key);
-        return (values != null && !values.isEmpty()) ? values.get(0) : def;
+        List<String> v = params.get(key);
+        return (v != null && !v.isEmpty()) ? v.get(0) : def;
     }
 
     private Response ok(String msg) {

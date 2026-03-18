@@ -12,26 +12,35 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     private final ZenboApi api = new ZenboApi();
+
     private EditText etIp, etSpeakText;
     private TextView tvLog;
     private ScrollView scrollLog;
+    private Button btnFollow;
+    private boolean isFollowing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        etIp       = findViewById(R.id.etIp);
-        etSpeakText= findViewById(R.id.etSpeakText);
-        tvLog      = findViewById(R.id.tvLog);
-        scrollLog  = findViewById(R.id.scrollLog);
+        etIp        = findViewById(R.id.etIp);
+        etSpeakText = findViewById(R.id.etSpeakText);
+        tvLog       = findViewById(R.id.tvLog);
+        scrollLog   = findViewById(R.id.scrollLog);
+        btnFollow   = findViewById(R.id.btnFollow);
 
-        // 連線 / Ping
+        setupButtons();
+    }
+
+    private void setupButtons() {
+
+        // 連線
         findViewById(R.id.btnConnect).setOnClickListener(v -> {
             String ip = etIp.getText().toString().trim();
             if (ip.isEmpty()) { toast("請輸入 IP"); return; }
             api.setIp(ip);
-            api.ping((ok, msg) -> log(ok ? "連線成功：" + msg : "Ping 失敗，請確認 IP"));
+            api.ping((ok, msg) -> log(ok ? "連線成功 ✓" : "Ping 失敗，請確認 IP"));
         });
 
         // 說話
@@ -45,36 +54,67 @@ public class MainActivity extends Activity {
         setExprBtn(R.id.btnHappy,     "happy");
         setExprBtn(R.id.btnConfident, "confident");
         setExprBtn(R.id.btnWorried,   "worried");
-        setExprBtn(R.id.btnAngry,     "angry");
-        setExprBtn(R.id.btnSleepy,    "sleepy");
         setExprBtn(R.id.btnDefault,   "default");
 
-        // 移動
-        setMoveBtn(R.id.btnForward,  "forward");
-        setMoveBtn(R.id.btnBackward, "backward");
-        setMoveBtn(R.id.btnLeft,     "left");
-        setMoveBtn(R.id.btnRight,    "right");
+        // 轉圈
+        findViewById(R.id.btnSpin).setOnClickListener(v ->
+                send(() -> api.spin((ok, msg) -> log("轉圈：" + (ok ? "OK" : "失敗")))));
 
-        // 停止
-        findViewById(R.id.btnStop).setOnClickListener(v ->
-                send(() -> api.stop((ok, msg) -> log("停止：" + (ok ? "OK" : "失敗")))));
+        // Follow Me
+        btnFollow.setOnClickListener(v -> {
+            if (!isFollowing) {
+                send(() -> api.startFollow((ok, msg) -> {
+                    if (ok) { isFollowing = true; updateFollowBtn(); }
+                    log("Follow Me：" + (ok ? "開啟" : "失敗"));
+                }));
+            } else {
+                send(() -> api.stopFollow((ok, msg) -> {
+                    if (ok) { isFollowing = false; updateFollowBtn(); }
+                    log("Follow Me：" + (ok ? "關閉" : "失敗"));
+                }));
+            }
+        });
+
+        // 輪燈 - 顏色
+        setLightBtn(R.id.btnLightRed,    "red",    "solid");
+        setLightBtn(R.id.btnLightGreen,  "green",  "solid");
+        setLightBtn(R.id.btnLightBlue,   "blue",   "solid");
+        setLightBtn(R.id.btnLightYellow, "yellow", "solid");
+        setLightBtn(R.id.btnLightPurple, "purple", "solid");
+        setLightBtn(R.id.btnLightCyan,   "cyan",   "solid");
+        setLightBtn(R.id.btnLightOrange, "orange", "solid");
+        setLightBtn(R.id.btnLightWhite,  "white",  "solid");
+
+        // 輪燈 - 效果
+        setLightBtn(R.id.btnLightBlink,   "white", "blink");
+        setLightBtn(R.id.btnLightBreathe, "white", "breathe");
+        setLightBtn(R.id.btnLightMarquee, "white", "marquee");
+        setLightBtn(R.id.btnLightOff,     "off",   "off");
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     private void setExprBtn(int id, String face) {
         findViewById(id).setOnClickListener(v ->
-                send(() -> api.setExpression(face, (ok, msg) -> log("表情 " + face + "：" + (ok ? "OK" : "失敗")))));
+                send(() -> api.setExpression(face, (ok, msg) ->
+                        log("表情 " + face + "：" + (ok ? "OK" : "失敗")))));
     }
 
-    private void setMoveBtn(int id, String dir) {
-        ((Button) findViewById(id)).setOnClickListener(v ->
-                send(() -> api.move(dir, (ok, msg) -> log("移動 " + dir + "：" + (ok ? "OK" : "失敗")))));
+    private void setLightBtn(int id, String color, String mode) {
+        findViewById(id).setOnClickListener(v ->
+                send(() -> api.setLight(color, mode, (ok, msg) ->
+                        log("輪燈 " + color + " " + mode + "：" + (ok ? "OK" : "失敗")))));
     }
 
     private void send(Runnable r) {
         if (!api.isConfigured()) { toast("請先連線"); return; }
         r.run();
+    }
+
+    private void updateFollowBtn() {
+        btnFollow.setText(isFollowing ? "停止 Follow Me" : "Follow Me");
+        btnFollow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                isFollowing ? 0xFFE53935 : 0xFF4CAF50));
     }
 
     private void log(String msg) {
